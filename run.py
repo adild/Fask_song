@@ -11,7 +11,6 @@ if __name__ == '__main__':
 
 
 '''
-run SQLAlchemy commands from terminal-->
 from flasksong import db
 from flasksong.models import User, Post
 db.create_all()
