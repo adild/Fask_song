@@ -2,16 +2,26 @@ import secrets
 import os
 from flask import render_template, url_for, flash, request, redirect, abort
 from flasksong import app, db, bcrypt
-from flasksong.forms import RegistrationForm, LoginForm, UpdateAccountForm, PostForm
-from flasksong.models import User, Post
+from flasksong.forms import RegistrationForm, LoginForm, UpdateAccountForm, PostForm, CommentForm
+from flasksong.models import User, Post, Comments_on_post
 from flask_login import login_user, current_user, logout_user, login_required
 from PIL import Image
 
 @app.route("/")
-@app.route("/home")
+@app.route("/home", methods=['GET', 'POST'])
 def home():
-    posts = Post.query.all()
-    return render_template('home.html', posts=posts)
+	page = request.args.get('page', 1, type=int)
+	post_id = request.args.get('post_id', type=int)
+	posts = Post.query.order_by(Post.date_posted.desc()).paginate(page=page, per_page=5)
+	form = CommentForm()
+	#likes = Likes_comments.query
+	if current_user.is_authenticated and form.validate_on_submit():
+		comments_on_post_obj = Comments_on_post(comments=form.commnt.data, author=current_user, postID=post_id)
+		db.session.add(comments_on_post_obj)
+		db.session.commit()
+		flash('Your comment has been submitted!', 'success')
+		
+	return render_template('home.html', form=form, posts=posts)
 
 
 @app.route("/about")
@@ -151,4 +161,38 @@ def delete_post(post_id):
 	return redirect(url_for('home'))
 
 
+@app.route("/user/<string:username>")
+def user_posts(username):
+	page = request.args.get('page', 1, type=int)
+	user = User.query.filter_by(username=username).first_or_404()
+	posts = Post.query.filter_by(author=user)\
+		.order_by(Post.date_posted.desc())\
+		.paginate(page=page, per_page=5)
+	return render_template('user_posts.html', posts=posts, user=user)
 
+
+
+@app.route("/likes_incr/<int:post_id>")
+@login_required
+def likes_incr(post_id):
+	post = Post.query.get_or_404(post_id)
+	post.likes = post.likes + 1
+	db.session.commit()
+	#flash('You like it', 'success')
+	return redirect(request.referrer)
+
+
+'''
+@app.route("/comment/<int:post_id>", methods=['GET', 'POST'])
+@login_required
+def comment(post_id):
+	form = CommentForm()
+	if form.validate_on_submit():
+		comments_on_post_obj = Comments_on_post(comments=form.commnt.data, author=current_user, postID=post_id)
+		db.session.add(post)
+		db.session.commit()
+		flash('Your post has been created!', 'success')
+		return redirect(url_for('home'))
+	return render_template('home.html', form=form)
+	
+'''	

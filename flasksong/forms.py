@@ -63,7 +63,9 @@ class PostForm(FlaskForm):
     song = FileField('Upload Your Song', validators=[DataRequired(), FileAllowed(['mp3'])])
     submit = SubmitField('Post')
     
-    
-    
+
+class CommentForm(FlaskForm):
+    commnt = StringField('Comment', validators=[DataRequired()])
+    submit = SubmitField('Comment')
     
     

@@ -4,19 +4,16 @@ if __name__ == '__main__':
     app.run(debug=True, use_reloader=False)
 
 
-
-
-
-
-
-
 '''
 from flasksong import db
-from flasksong.models import User, Post
+from flasksong.models import User, Post, Comments_on_post
 db.create_all()
 user = User.query.first()
+User.query.all()
+Post.query.all()
+Comments_on_post.query.all()
 db.drop_all()
 
-mysql://sql12300189:ZUdKn7maRm@sql12.freemysqlhosting.net/sql12300189
+
 
 '''
