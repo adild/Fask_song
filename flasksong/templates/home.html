@@ -10,45 +10,86 @@
               <small class="text-muted">{{ post.date_posted.strftime('%d-%m-%Y %X') }}</small>
             </div>
             <h2><a class="article-title" href="{{ url_for('post', post_id=post.id) }}">{{ post.title }}</a></h2>
+            	<div class="article-metadata">
        	        <div class="col-sm-4 col-sm-offset-4">
 		      <audio controls style="width: 100%;">
 			<source src="{{ url_for('static', filename='user_songs/' + post.song_file) }}">
 		      </audio>
+		    </div>
+		</div>
+		<div class="article-metadata">
+			<div class="col-sm-4 col-sm-offset-4">
+		 		{{ post.likes }} likes
+		</div>
 		</div>
 		
+
+		<div class="article-metadata">
+		<div class="container">
+		  <div class="row">
+		    <div class="col-sm">
+		      <a class="mr-2" href="{{ url_for('likes_incr', post_id=post.id) }}"><span id="cmnt-sec">Like</span></a>
+		    </div>
+		    <div class="col-sm">
+		      <a class="mr-2" href="#"><span id="cmnt-sec">Comment</span></a>
+		    </div>
+		    <div class="col-sm">
+		      <a class="mr-2" href="#"><span id="cmnt-sec">Share</span></a>
+		    </div>
+		  </div>
+		</div>		
+		</div>
 		
-		<div class="input-group input-group-sm">
-		<a class="mr-2" href="{{ url_for('likes_incr', post_id=post.id) }}"><span style="font-size:150%;color:red;">&hearts;</span>
-						{{ post.likes }}</a>
-			  
-		<form method="POST" action="{{ url_for('home', post_id=post.id) }}">
-		    {{ form.hidden_tag() }}
-		   
-		        
-		        <div class="form-group">
-		            {{ form.commnt.label(class="form-control-label") }}
+	{% for cm in comments_model %}		
+		{% if cm.postID ==  post.id%}
+			
+			
+			 <br>
+			 <div class="row small-gap-row-below">
+			<div class="col-xs-3 col-sm-1">
+		         <img src="{{ url_for('static', filename='profile_pics/' + cm.author.image_file) }}"
+			   alt="Profile Picture" class="img-responsive rounded-circle"
+			   style="max-height: 50px; max-width: 40px;">
+   		     </div>
+			
+				
+			<div class="col-xs-9 col-sm-11">
+			   <div id="ip2" class="rounded float-left" style="background-color:#F2F5FF">
+			    <a class="mr-2" href="#">{{ cm.author.username }}</a>
+			    <span>{{ cm.comments }}<span>
+			   </div><br>
+			   <div>
+			    <small class="text-muted">Like</small> -
+			    <small class="text-muted">Reply</small> -	
+			    <small class="text-muted">{{ post.date_posted.strftime('%d-%m-%Y') }}</small>
+			   </div> 
+		    </div>
+
+			</div>
+			 			
+		{% endif %}
+	{% endfor %}	
+	<form method="POST" action="{{ url_for('home', post_id=post.id) }}">
+		      {{ form.hidden_tag() }}		 		        
+		        <fieldset class="form-group">		        
 		            {% if form.commnt.errors %}
-		                {{ form.commnt(class="form-control form-control-lg is-invalid") }}
+		                {{ form.commnt(id="ip4") }}
 		                <div class="invalid-feedback">
 		                    {% for error in form.commnt.errors %}
 		                        <span>{{ error }}</span>
 		                    {% endfor %}
 		                </div>
 		            {% else %}
-		                {{ form.commnt(class="form-control form-control-lg") }}
+		                {{ form.commnt(id="ip4") }}
+				
+		        	{{ form.submit(class="btn inputGroup-sizing-sm") }}
+		    		
 		            {% endif %}
-		        </div>
-			 
-		    <div class="form-group">
-		        {{ form.submit(class="btn btn-outline-info") }}
-		    </div>
-		</form>
-		
-
-				 
-		<!-- <p class="article-content">{{ post.content }}</p> -->
-          </div>
+		        </div>	 
+			 </fieldset>		
+		      </form>
         </article>
+	
     {% endfor %}
 	{% for page_num in posts.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
       {% if page_num %}

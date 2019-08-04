@@ -1,11 +1,13 @@
 import secrets
 import os
 from flask import render_template, url_for, flash, request, redirect, abort
-from flasksong import app, db, bcrypt
-from flasksong.forms import RegistrationForm, LoginForm, UpdateAccountForm, PostForm, CommentForm
+from flasksong import app, db, bcrypt, mail 
+from flasksong.forms import RegistrationForm, LoginForm, UpdateAccountForm, PostForm, CommentForm, RequestResetForm, ResetPasswordForm
 from flasksong.models import User, Post, Comments_on_post
 from flask_login import login_user, current_user, logout_user, login_required
 from PIL import Image
+from flask_mail import Message
+
 
 @app.route("/")
 @app.route("/home", methods=['GET', 'POST'])
@@ -13,15 +15,16 @@ def home():
 	page = request.args.get('page', 1, type=int)
 	post_id = request.args.get('post_id', type=int)
 	posts = Post.query.order_by(Post.date_posted.desc()).paginate(page=page, per_page=5)
+	comments_model = Comments_on_post.query.order_by(Comments_on_post.date_posted.desc())
 	form = CommentForm()
 	#likes = Likes_comments.query
-	if current_user.is_authenticated and form.validate_on_submit():
+	if form.validate_on_submit() and current_user.is_authenticated:
 		comments_on_post_obj = Comments_on_post(comments=form.commnt.data, author=current_user, postID=post_id)
 		db.session.add(comments_on_post_obj)
 		db.session.commit()
 		flash('Your comment has been submitted!', 'success')
 		
-	return render_template('home.html', form=form, posts=posts)
+	return render_template('home.html', form=form, posts=posts, comments_model=comments_model)
 
 
 @app.route("/about")
@@ -180,6 +183,48 @@ def likes_incr(post_id):
 	db.session.commit()
 	#flash('You like it', 'success')
 	return redirect(request.referrer)
+
+
+def send_reset_email(user):
+	token = user.get_reset_token()
+	msg = Message('Password reset request', sender='noreply@demo.com', recipients=[user.email])
+	msg.body = f'''To reset your password, visit the following link:
+{url_for('reset_token', token=token, _external=True)}
+If you didnt make this request then simply ignore this email.
+'''
+	mail.send(msg)
+
+
+@app.route("/reset_password", methods=['GET', 'POST'])
+def reset_request():
+	if current_user.is_authenticated:
+	    return redirect(url_for('home'))
+	form = RequestResetForm()
+	if form.validate_on_submit():
+	    user = User.query.filter_by(email=form.email.data).first()
+	    send_reset_email(user) 
+	    flash('An email has been sent with instructions to reset your password.', 'info')
+	    return redirect(url_for('login'))
+	return render_template('reset_request.html', title='Reset Password', form=form)
+
+
+
+@app.route("/reset_password/<token>", methods=['GET', 'POST'])
+def reset_token(token):
+	if current_user.is_authenticated:
+	    return redirect(url_for('home'))
+	user = User.verify_reset_token(token)
+	if user is None: 
+	    flash('Invalid or Expired token', 'warning')
+	    return redirect(url_for('reset_request'))	
+	form = ResetPasswordForm()
+	if form.validate_on_submit():
+	    hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+	    user.password = hashed_password
+	    db.session.commit()
+	    flash('Your Password has been updated! You are now able to log in', 'success')
+	    return redirect(url_for('login'))
+	return render_template('reset_token.html', title='Reset Password', form=form)
 
 
 '''
