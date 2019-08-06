@@ -18,6 +18,7 @@ class User(db.Model, UserMixin):
 
     posts = db.relationship('Post', backref='author', lazy=True)
     comments_on_post_user = db.relationship('Comments_on_post', backref='author', lazy=True)
+    followers_following = db.relationship('Followers_following', backref='author', lazy=True)
 
     def get_reset_token(self, expires_sec=1800):
     	s = Serializer(app.config['SECRET_KEY'], expires_sec)
@@ -43,7 +44,7 @@ class Post(db.Model):
 	#contflask db initent = db.Column(db.Text, nullable=True)
 	song_file = db.Column(db.String(20), nullable=False)
 	likes = db.Column(db.Integer, nullable=False, default=0)
-	comments = db.Column(db.String(200), nullable=True)
+	#comments = db.Column(db.String(200), nullable=True)
 	user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 	
 	comments_on_post = db.relationship('Comments_on_post', backref='author2', lazy=True)
@@ -63,4 +64,17 @@ class Comments_on_post(db.Model):
 
 	def __repr__(self):
 		return f"Comments_on_post('{self.comments}')"
+
+
+class Followers_following(db.Model):
+	id = db.Column(db.Integer, primary_key=True)
+	followers = db.Column(db.String(20), nullable=False)
+	#following = db.Column(db.String(20), unique=True, nullable=False)
+	date_posted = db.Column(db.DateTime, nullable=False, default=datetime.now)
+	user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+
+	def __repr__(self):
+		return f"Followers_following('{self.id}', '{self.followers}', '{self.date_posted}')"
+
+
 

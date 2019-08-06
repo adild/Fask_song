@@ -46,15 +46,17 @@ a.article-title:hover {
 }
 
 .article-img {
-  height: 65px;
-  width: 65px;
+  height: 55px;
+  width: 55px;
   margin-right: 16px;
+  border-radius: 50%;
 }
 
 .article-metadata {
   padding-bottom: 1px;
   margin-bottom: 4px;
   border-bottom: 1px solid #e3e3e3
+  border-radius: 50%;
 }
 
 .article-metadata a:hover {
@@ -73,6 +75,7 @@ a.article-title:hover {
   width: 125px;
   margin-right: 20px;
   margin-bottom: 16px;
+  border-radius: 50%;
 }
 
 .account-heading {
@@ -84,8 +87,8 @@ border-radius: 1rem;
 }
 
 #ip4 {
-    border-radius: 30px 50px 30px;
-    border: 0.5px solid #ced4e6;
+    border-radius: 45px 50px 45px;
+    border: 2.5px solid #ced4e6;
     padding: 17px; 
     width: 75%;
     height: 10px; 
@@ -93,4 +96,11 @@ border-radius: 1rem;
 
 #cmnt-sec{
   font-size:150%;
+}
+
+.comment-img {
+  height: 50px; 
+  width: 50px;"
+  margin-right: 16px;
+  border-radius: 50%;
 }

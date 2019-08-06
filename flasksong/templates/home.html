@@ -3,20 +3,20 @@
 
     {% for post in posts.items %}
         <article class="media content-section">
-		 <img class="rounded-circle article-image" src="{{ url_for('static', filename='profile_pics/' + post.author.image_file) }}">
+		<img class="article-image account-img" src="{{ url_for('static', filename='profile_pics/' + post.author.image_file) }}">
           <div class="media-body">
             <div class="article-metadata">
-              <a class="mr-2" href="{{ url_for('user_posts', username=post.author.username) }}">{{ post.author.username }}</a>
+              <a class="mr-3" href="{{ url_for('user_posts', username=post.author.username) }}">{{ post.author.username }}</a>
               <small class="text-muted">{{ post.date_posted.strftime('%d-%m-%Y %X') }}</small>
             </div>
             <h2><a class="article-title" href="{{ url_for('post', post_id=post.id) }}">{{ post.title }}</a></h2>
-            	<div class="article-metadata">
-       	        <div class="col-sm-4 col-sm-offset-4">
-		      <audio controls style="width: 100%;">
-			<source src="{{ url_for('static', filename='user_songs/' + post.song_file) }}">
+            <div class="article-metadata">
+       	     <div class="ready-player-{{loop.index}} player" style="width: 100%;">
+		      <audio crossorigin >
+				<source src="{{ url_for('static', filename='user_songs/' + post.song_file) }}">
 		      </audio>
-		    </div>
-		</div>
+		     </div>
+		 </div>
 		<div class="article-metadata">
 			<div class="col-sm-4 col-sm-offset-4">
 		 		{{ post.likes }} likes
@@ -30,10 +30,10 @@
 		    <div class="col-sm">
 		      <a class="mr-2" href="{{ url_for('likes_incr', post_id=post.id) }}"><span id="cmnt-sec">Like</span></a>
 		    </div>
-		    <div class="col-sm">
+		    <div class="col-5">
 		      <a class="mr-2" href="#"><span id="cmnt-sec">Comment</span></a>
 		    </div>
-		    <div class="col-sm">
+		    <div class="col-3">
 		      <a class="mr-2" href="#"><span id="cmnt-sec">Share</span></a>
 		    </div>
 		  </div>
@@ -47,15 +47,13 @@
 			 <br>
 			 <div class="row small-gap-row-below">
 			<div class="col-xs-3 col-sm-1">
-		         <img src="{{ url_for('static', filename='profile_pics/' + cm.author.image_file) }}"
-			   alt="Profile Picture" class="img-responsive rounded-circle"
-			   style="max-height: 50px; max-width: 40px;">
+		         <img class="article-image comment-img" src="{{ url_for('static', filename='profile_pics/' + cm.author.image_file) }}">
    		     </div>
 			
 				
 			<div class="col-xs-9 col-sm-11">
 			   <div id="ip2" class="rounded float-left" style="background-color:#F2F5FF">
-			    <a class="mr-2" href="#">{{ cm.author.username }}</a>
+			    <a class="mr-2" href="{{ url_for('user_posts', username=cm.author.username) }}">{{ cm.author.username }}</a>
 			    <span>{{ cm.comments }}<span>
 			   </div><br>
 			   <div>
@@ -103,6 +101,15 @@
       {% endif %}
 	{% endfor %}
 
-{% endblock content %}
+<script src="https://cdn.jsdelivr.net/gh/greghub/green-audio-player/dist/js/green-audio-player.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        GreenAudioPlayer.init({
+            selector: '.player',
+            stopOthersOnPlay: true
+        });
+    });
+</script>
 
+{% endblock content %}
 

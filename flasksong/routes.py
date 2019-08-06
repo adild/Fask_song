@@ -3,7 +3,7 @@ import os
 from flask import render_template, url_for, flash, request, redirect, abort
 from flasksong import app, db, bcrypt, mail 
 from flasksong.forms import RegistrationForm, LoginForm, UpdateAccountForm, PostForm, CommentForm, RequestResetForm, ResetPasswordForm
-from flasksong.models import User, Post, Comments_on_post
+from flasksong.models import User, Post, Comments_on_post, Followers_following
 from flask_login import login_user, current_user, logout_user, login_required
 from PIL import Image
 from flask_mail import Message
@@ -225,6 +225,26 @@ def reset_token(token):
 	    flash('Your Password has been updated! You are now able to log in', 'success')
 	    return redirect(url_for('login'))
 	return render_template('reset_token.html', title='Reset Password', form=form)
+
+
+
+
+@app.route("/user/<string:username>/follower_follow")
+@login_required
+def follower_follow(username):
+	flash('in follower_follow', 'success')
+	user = User.query.filter_by(username=username).first_or_404()
+	#already_register_user = Followers_following.query.filter_by(current_user.username)
+	if current_user.is_authenticated:
+		followers_following_obj = Followers_following(followers=current_user.username, author=user)
+		db.session.add(followers_following_obj)
+		db.session.commit()
+		flash('You follow', 'success')
+		
+	return redirect(url_for('home'))
+	
+
+
 
 
 '''
