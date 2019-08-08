@@ -15,11 +15,13 @@
 		{% endif %}
 	    </div>
 	    <h2 class="article-title"> {{ post.title }}</h2>
-		<div class="col-sm-4 col-sm-offset-4">
-		      <audio controls style="width: 100%;">
-			<source src="{{ url_for('static', filename='user_songs/' + post.song_file) }}">
+		   <div class="article-metadata">
+       	     <div class="ready-player player" style="width: 100%;">
+		      <audio crossorigin >
+				<source src="{{ url_for('static', filename='user_songs/' + post.song_file) }}">
 		      </audio>
-		    </div>
+		     </div>
+		 </div>
 	   <!-- <p class="article-content">{{ post.content }}</p> -->
 	  </div>
 	</article>

@@ -13,6 +13,10 @@ User.query.all()
 Post.query.all()
 Comments_on_post.query.all()
 Followers_following.query.all()
+
+
+
+Followers_following.query.delete()
 db.drop_all()
 
 

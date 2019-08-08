@@ -1,13 +1,11 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileAllowed, FileField
-from flask_login import current_user
-#from flask.ext.uploads import UploadSet, AUDIO
 from wtforms import StringField, PasswordField, SubmitField, BooleanField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 from flasksong.models import User
+from flask_login import current_user
 
 
-#audios = UploadSet('audios', AUDIO)
 
 class RegistrationForm(FlaskForm):
     username = StringField('Username',
@@ -58,17 +56,9 @@ class UpdateAccountForm(FlaskForm):
             if user:
                 raise ValidationError('That email is taken. Please choose a different one.')
 
-class PostForm(FlaskForm):
-    title = StringField('Title', validators=[DataRequired()])
-    song = FileField('Upload Your Song', validators=[DataRequired(), FileAllowed(['mp3'])])
-    submit = SubmitField('Post')
-    
 
-class CommentForm(FlaskForm):
-    commnt = StringField('Comment', validators=[DataRequired()])
-    submit = SubmitField('Comment')
-    
-    
+
+
 class RequestResetForm(FlaskForm):
     email = StringField('Email',
                         validators=[DataRequired(), Email()])

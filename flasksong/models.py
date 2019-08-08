@@ -34,7 +34,7 @@ class User(db.Model, UserMixin):
     	return User.query.get(user_id)
 
     def __repr__(self):
-    	return f"User('{self.username}', '{self.email}', '{self.image_file}')"
+    	return f"User('{self.id}', '{self.username}', '{self.email}', '{self.image_file}')"
 
 
 class Post(db.Model):
@@ -74,7 +74,7 @@ class Followers_following(db.Model):
 	user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
 	def __repr__(self):
-		return f"Followers_following('{self.id}', '{self.followers}', '{self.date_posted}')"
+		return f"Followers_following('{self.id}', '{self.followers}', '{self.date_posted}', '{self.user_id}')"
 
 
 
