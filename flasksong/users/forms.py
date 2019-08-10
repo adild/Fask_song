@@ -58,7 +58,6 @@ class UpdateAccountForm(FlaskForm):
 
 
 
-
 class RequestResetForm(FlaskForm):
     email = StringField('Email',
                         validators=[DataRequired(), Email()])
