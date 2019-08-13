@@ -6,3 +6,4 @@ flask-bcrypt
 flask-login
 flask-mail
 flask-migrate
+gunicorn
